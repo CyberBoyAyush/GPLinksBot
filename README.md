@@ -1,4 +1,4 @@
-# GPlink-bot
+# GPLinksBot 🔥
 Make short link by using [GPlink](https://gplinks.in/) API key
 ### Installation
 
