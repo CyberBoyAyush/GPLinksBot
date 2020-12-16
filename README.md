@@ -6,7 +6,7 @@ Make short link by using [GPlink](https://gplinks.in/) API key
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://www.heroku.com/deploy?template=https://github.com/CyberBoyAyush/GPLinksBot)
 
-## Try GPLinks PHP Bot (Some Are getting Error In This Repo So Use PHP Repo)
+## Try GPLinks PHP Bot (Some Are getting Error In This Repo So Use PHP Repo. If You Are Getting Error)
 https://github.com/CyberBoyAyush/Gp-Links-Bot
 
 ##### Required Variables
