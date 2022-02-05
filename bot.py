@@ -50,7 +50,7 @@ async def link_handler(bot, message):
 
 
 async def get_shortlink(link, alias):
-    url = f'https://{WEBSITE}/api'
+    url = f'https://gplinks.in/api'
     params = {'api': API_KEY,
               'url': link,
               'alias': alias
