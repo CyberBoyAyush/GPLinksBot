@@ -15,31 +15,55 @@ bot = Client('gplink bot',
              sleep_threshold=10)
 
 
-@bot.on_message(filters.command('start') & filters.private)
+start_msg = """
+Hi {}!
+
+I'm GPlink bot. Just send me link and get short link!
+
+Send me a link to short a link with random alias.
+
+For custom alias, <code>[link] | [custom_alias]</code>, Send in this format\n
+Ex: https://t.me/example | Example
+
+    """
+
+
+@bot.on_message(filters.command('start'))
 async def start(bot, message):
-    await message.reply(
-        f"**𝗛𝗘𝗟𝗟𝗢🎈{message.chat.first_name}!**\n\n"
-        "𝗜'𝗺 𝗚𝗣𝗹𝗶𝗻𝗸 𝗯𝗼𝘁. 𝗝𝘂𝘀𝘁 𝘀𝗲𝗻𝗱 𝗺𝗲 𝗹𝗶𝗻𝗸 𝗮𝗻𝗱 𝗴𝗲𝘁 𝗦𝗵𝗼𝗿𝘁𝗲𝗻𝗲𝗱 𝗨𝗥𝗟. \n\n 𝗧𝗵𝗶𝘀 𝗕𝗼𝘁 𝗜𝘀 𝗠𝗮𝗱𝗲 𝗕𝘆 @CyberBoyAyush💖")
+    await message.reply_text(start_msg.format(message.chat.first_name), disable_web_page_preview=True, quote=True)
 
 
+    # custom alias support - [link] | [alias] 
+    
 @bot.on_message(filters.regex(r'https?://[^\s]+') & filters.private)
 async def link_handler(bot, message):
-    link = message.matches[0].group(0)
-    try:
-        short_link = await get_shortlink(link)
-        await message.reply(f'Here is your👉 [Short Link🎈]({short_link})', quote=True)
-    except Exception as e:
-        await message.reply(f'Error: {e}', quote=True)
+    if "|" in message.text:
+        link_parts = message.text.split("|")
+        link = link_parts[0]
+        alias = link_parts[1:-1+1]
+        alias = "".join(alias)
+    else:
+        link = message.matches[0].group(0)
+        alias = ""
+    short_link = await get_shortlink(link, alias)
+    await message.reply(short_link, quote=True)
 
 
-async def get_shortlink(link):
-    url = 'https://gplinks.in/api'
-    params = {'api': API_KEY, 'url': link}
+async def get_shortlink(link, alias):
+    url = f'https://gplinks.in/api'
+    params = {'api': API_KEY,
+              'url': link,
+              'alias': alias
+              }
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, params=params, raise_for_status=True) as response:
+        async with session.get(url, params=params, raise_for_status=True, ssl=False) as response:
             data = await response.json()
-            return data["shortenedUrl"]
+            print(data["status"])
+            if data["status"] == "success":
+                return f"<code>{data['shortenedUrl']}</code>\n\nHere is your Link:\n{data['shortenedUrl']}"
+            else:
+                return f"Error: {data['message']}"
 
 
 bot.run()
